@@ -33,4 +33,16 @@ def add_target(df: pd.DataFrame) -> pd.DataFrame:
 
 def drop_leaky_columns(df: pd.DataFrame) -> pd.DataFrame:
     """Drop every column listed in config.LEAKY (ignore ones that are absent)."""
-    ...
+    out = df.copy()
+
+    leaky_columns = [
+        "title",
+        "sig",
+        "mmi",
+        "cdi",
+        "felt",
+        "alert",
+    ]
+
+    return out.drop(columns=leaky_columns, errors="ignore")
+
