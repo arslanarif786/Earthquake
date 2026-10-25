@@ -21,10 +21,17 @@ NUMERIC: list[str] = [
     "is_reviewed",
     "nst_missing",
     "abs_lat",
-    "is_shallow"
+    "is_shallow",
 ]   # numeric feature columns
 NOMINAL: list[str] = [
     "region",
-    "magType"
+    "magType",
 ]   # categorical feature columns (one-hot encoded)
-LEAKY: list[str] = []     # columns that encode the magnitude: must be dropped
+LEAKY: list[str] = [
+    "title",
+    "sig",
+    "mmi",
+    "cdi",
+    "felt",
+    "alert",
+]     # columns that encode the magnitude: must be dropped
