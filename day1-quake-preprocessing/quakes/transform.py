@@ -8,6 +8,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import (
     OneHotEncoder,
+    PolynomialFeatures,
     StandardScaler,
     MinMaxScaler,
     RobustScaler,
@@ -36,7 +37,7 @@ def split_data(df: pd.DataFrame, test_size: float = 0.2):
     return X_train, X_test, y_train, y_test
 
 
-def build_preprocessor(scaler: str = "robust") -> ColumnTransformer:
+def build_preprocessor(scaler: str = "robust", degree: int = 1) -> ColumnTransformer:
     """ColumnTransformer over config.NUMERIC and config.NOMINAL.
 
     numeric: median imputation, then a scaler chosen by name
@@ -56,12 +57,14 @@ def build_preprocessor(scaler: str = "robust") -> ColumnTransformer:
             "Choose from: standard, minmax, robust"
         )
 
-    numeric_pipeline = Pipeline(
-        steps=[
-            ("imputer", SimpleImputer(strategy="median")),
-            ("scaler", scalers[scaler]),
-        ]
-    )
+    if not isinstance(degree, int) or degree < 1:
+        raise ValueError("degree must be a positive integer")
+
+    numeric_steps = [("imputer", SimpleImputer(strategy="median"))]
+    if degree > 1:
+        numeric_steps.append(("polynomial", PolynomialFeatures(degree=degree, include_bias=False)))
+    numeric_steps.append(("scaler", scalers[scaler]))
+    numeric_pipeline = Pipeline(steps=numeric_steps)
 
     nominal_pipeline = Pipeline(
         steps=[
